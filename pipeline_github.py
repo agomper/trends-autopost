@@ -15,7 +15,7 @@ YOUTUBE_API_KEY  = os.environ["YOUTUBE_API_KEY"]
 INSTAGRAM_USER   = os.environ["INSTAGRAM_USER"]
 ELEVENLABS_VOICE = "Q0NjdvleZbRtgDhUJamI"
 
-N_COMENTARIOS  = 8
+N_COMENTARIOS  = 2
 DURACION_CLIP  = 5
 OUTPUT_DIR     = "/tmp/comentarios/"
 BLACKLIST_PATH = "blacklist.json"   # en el repo, GitHub Actions hace commit al final
@@ -174,7 +174,7 @@ def descargar_video(url, output_dir):
         "-f", "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480]",
         "--merge-output-format", "mp4",
         "--force-overwrites",
-        "--js-runtimes", "nodejs",
+        "--js-runtimes", "node",
         "-o", out_path, "--no-playlist", url
     ], capture_output=True)
     if r.returncode != 0:
