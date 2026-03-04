@@ -18,7 +18,7 @@ jobs:
       - name: Instalar dependencias del sistema
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          sudo apt-get install -y ffmpeg fonts-dejavu-core nodejs
 
       - name: Instalar dependencias Python
         run: |
