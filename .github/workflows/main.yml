@@ -1,0 +1,43 @@
+name: Autopost Trends
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # cada 30 minutos
+  workflow_dispatch:           # permite ejecutar manualmente desde GitHub
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # necesario para hacer commit de la blacklist
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias del sistema
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Instalar dependencias Python
+        run: |
+          pip install google-genai google-auth google-auth-oauthlib \
+                      google-api-python-client requests yt-dlp instagrapi pillow
+
+      - name: Ejecutar pipeline
+        env:
+          GEMINI_API_KEY:   ${{ secrets.GEMINI_API_KEY }}
+          YOUTUBE_API_KEY:  ${{ secrets.YOUTUBE_API_KEY }}
+          INSTAGRAM_USER:          ${{ secrets.INSTAGRAM_USER }}
+          INSTAGRAM_SESSION_JSON:  ${{ secrets.INSTAGRAM_SESSION_JSON }}
+          YT_TOKEN_JSON:           ${{ secrets.YT_TOKEN_JSON }}
+        run: python pipeline_github.py
+
+      - name: Guardar blacklist actualizada en el repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add blacklist.json
+          git diff --staged --quiet || git commit -m "blacklist: ciclo $(date +'%d/%m/%Y %H:%M')"
+          git push
